@@ -35,6 +35,13 @@ class Node:
     def __post_init__(self) -> None:
         self.blockchain = Blockchain(self.complexity)
 
+        genesis_time = datetime(2026, 1, 1, 0, 0, 0)
+        genesis = Block("", None, self.complexity, time=genesis_time)
+        genesis.hash = genesis.sha256()
+
+        self.blockchain.blocks = [genesis]
+
+
     def add_peers(self, nodes: List[str]) -> List[str]:
         added = []
         for n in nodes:
