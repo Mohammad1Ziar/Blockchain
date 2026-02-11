@@ -10,6 +10,9 @@ from pydantic import BaseModel
 
 from .blockchain import Blockchain
 
+from datetime import datetime
+from .block import Block
+
 
 class RegisterNodesRequest(BaseModel):
     nodes: List[str]

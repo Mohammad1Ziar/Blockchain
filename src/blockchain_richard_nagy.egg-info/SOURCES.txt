@@ -10,4 +10,5 @@ src/blockchain/node.py
 src/blockchain_richard_nagy.egg-info/PKG-INFO
 src/blockchain_richard_nagy.egg-info/SOURCES.txt
 src/blockchain_richard_nagy.egg-info/dependency_links.txt
+src/blockchain_richard_nagy.egg-info/requires.txt
 src/blockchain_richard_nagy.egg-info/top_level.txt
