@@ -3,8 +3,10 @@ pyproject.toml
 readme.md
 setup.cfg
 src/blockchain/__init__.py
+src/blockchain/__main__.py
 src/blockchain/block.py
 src/blockchain/blockchain.py
+src/blockchain/node.py
 src/blockchain_richard_nagy.egg-info/PKG-INFO
 src/blockchain_richard_nagy.egg-info/SOURCES.txt
 src/blockchain_richard_nagy.egg-info/dependency_links.txt
