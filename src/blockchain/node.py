@@ -20,7 +20,6 @@ class MineRequest(BaseModel):
 
 
 class ReceiveBlockRequest(BaseModel):
-    # برای سادگی، کل chain را هم می‌توانستیم بفرستیم، ولی اینجا فقط داده می‌فرستیم
     data: Any
 
 
@@ -46,7 +45,6 @@ class Node:
         n = n.strip()
         if not n:
             return None
-        # اگر بدون scheme داده شد، http فرض می‌گیریم
         if "://" not in n:
             n = "http://" + n
         u = urlparse(n)
@@ -55,10 +53,6 @@ class Node:
         return f"{u.scheme}://{u.netloc}"
 
     def resolve_conflicts(self) -> bool:
-        """
-        Longest valid chain wins.
-        اگر از بین peerها زنجیره‌ی طولانی‌تر و معتبرتری پیدا شد، جایگزین می‌کنیم.
-        """
         max_len = len(self.blockchain.blocks)
         best_chain = None
 
@@ -74,20 +68,18 @@ class Node:
             if not isinstance(chain, list):
                 continue
 
-            # بازسازی chain از روی داده‌ها با استفاده از همین کلاس Blockchain:
             candidate = Blockchain(self.complexity)
-            candidate.blocks = []  # جایگزین genesis پیش‌فرض
+            candidate.blocks = []  
             try:
-                from .block import Block  # import داخلی
+                from .block import Block 
 
                 for b in chain:
                     blk = Block(
                         b["previous_hash"],
                         b.get("data"),
                         b.get("complexity", self.complexity),
-                        time=b.get("time"),  # ممکنه datetime/string نباشه
+                        time=b.get("time"),  
                     )
-                    # proof/hash را از payload ست می‌کنیم تا عیناً همان باشد
                     blk.proof = b.get("proof", blk.proof)
                     blk.hash = b.get("hash", blk.hash)
                     candidate.blocks.append(blk)
@@ -113,7 +105,6 @@ def create_app(node: Node) -> FastAPI:
 
     @app.get("/chain")
     def get_chain():
-        # chain را به صورت json-friendly برمی‌گردونیم
         out = []
         for b in node.blockchain.blocks:
             out.append(
@@ -140,12 +131,10 @@ def create_app(node: Node) -> FastAPI:
 
     @app.post("/mine")
     def mine(req: MineRequest):
-        # قبل از ماین کردن، اگر chain طولانی‌تری وجود دارد، همگام می‌کنیم
         node.resolve_conflicts()
 
         node.blockchain.add(req.data)
 
-        # broadcast ساده: به همتاها می‌گیم resolve کنن (یا می‌تونیم بلاک/chain بفرستیم)
         for peer in list(node.peers):
             try:
                 requests.post(f"{peer}/resolve", timeout=2)
